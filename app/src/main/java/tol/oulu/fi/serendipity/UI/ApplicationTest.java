@@ -1,4 +1,4 @@
-package tol.oulu.fi.serendipity;
+package tol.oulu.fi.serendipity.UI;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

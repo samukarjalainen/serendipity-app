@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Serendipity.iml" filepath="$PROJECT_DIR$/Serendipity.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/serendipity-app.iml" filepath="$PROJECT_DIR$/serendipity-app.iml" />
     </modules>
   </component>
 </project>
