@@ -5,4 +5,5 @@ package tol.oulu.fi.serendipity.UI;
  */
 public class RecordedListScreen {
     //this is a test
+    // i am doing some stuff here
 }
