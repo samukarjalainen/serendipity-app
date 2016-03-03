@@ -8,6 +8,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -48,6 +51,8 @@ Context ctx;
 
     @Override
     protected Void doInBackground(String... param) {
+        JSONObject dataToSend =authCommsEntity();
+
         try {
             String authToken = param[0];
             FileInputStream fileInputStream = new FileInputStream(sourceFile.getPath());
@@ -56,12 +61,13 @@ Context ctx;
             urlConnection.setDoInput(true); // Allow Inputs
             urlConnection.setDoOutput(true); // Allow Outputs
             urlConnection.setUseCaches(false); // Don't use a Cached Copy
-            urlConnection.setRequestProperty("authorization", "Bearer "+ authToken);
+            urlConnection.setRequestProperty("authorization", "Bearer " + authToken);
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Connection", "Keep-Alive");
             urlConnection.setRequestProperty("ENCTYPE", "multipart/form-data");
             urlConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
             urlConnection.setRequestProperty("file", sourceFile.getName());
+            urlConnection.setRequestProperty("body", String.valueOf(dataToSend));
             dOutputStream = new DataOutputStream(urlConnection.getOutputStream());
             dOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
             dOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + "file" + "\";filename="
@@ -144,4 +150,20 @@ Context ctx;
         mFileName += "/audiorecordtest2.mp3";
 
     }
+    public JSONObject authCommsEntity() {
+        JSONObject authJson = new JSONObject();
+
+        try {
+            authJson.put("title", "MySound");
+            authJson.put("description", "Yeah, very cool sound wohoo!!");
+            authJson.put("lat", "25524");
+            authJson.put("long", "24465");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+//TODO
+        return authJson;
+    }
+
 }
