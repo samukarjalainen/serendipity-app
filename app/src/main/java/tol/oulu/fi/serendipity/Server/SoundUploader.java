@@ -1,8 +1,12 @@
 package tol.oulu.fi.serendipity.Server;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -35,8 +39,9 @@ public class SoundUploader extends AsyncTask<String, Void, Void> {
     int maxBufferSize = 1 * 1024 * 1024;
     File sourceFile = null;
     String serverResponseMessage = null;
-
+Context ctx;
     public SoundUploader(RecordScreen recordScreen) {
+        ctx = recordScreen.getApplicationContext();
         initFile();
         sourceFile = new File(mFileName);
     }
@@ -82,8 +87,7 @@ public class SoundUploader extends AsyncTask<String, Void, Void> {
             Log.e("uploadFile", "HTTP Response is : "
                     + serverResponseMessage + ": " + serverResponseCode);
             if (serverResponseCode <= 200) {
-
-
+               makeToast.post(runnableForToast);
             } else {
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 Log.e("SERVER REPLIED:", in.toString());
@@ -105,6 +109,16 @@ public class SoundUploader extends AsyncTask<String, Void, Void> {
         return null;
     }
 
+    /** Handler to delay the next task */
+    private final Handler makeToast = new Handler();
+    /** Runnable that sets the next task type in BtGwService */
+    private final Runnable runnableForToast = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(ctx, "Upload Successful!!", Toast.LENGTH_SHORT).show();
+
+        }
+    };
     private String convertStreamToString(InputStream isds) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(isds));
         StringBuilder sb = new StringBuilder();
@@ -127,7 +141,7 @@ public class SoundUploader extends AsyncTask<String, Void, Void> {
     }
     public void initFile() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest3.mp3";
+        mFileName += "/audiorecordtest2.mp3";
 
     }
 }

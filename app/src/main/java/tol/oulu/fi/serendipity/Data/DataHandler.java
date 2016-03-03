@@ -130,6 +130,23 @@ public class DataHandler extends SQLiteOpenHelper {
         return authJson;
     }
 
+    public String getAuthToken() {
+        String retval = "";
+        SQLiteDatabase db = getReadableDatabase();
+        if (db != null) {
+            Cursor cursor = db.rawQuery("SELECT auth_token FROM settings", null);
+            try {
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        retval = cursor.getString(0);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return retval;
+    }
     /**
      * This method retrieves username, password and user_id from settings and puts them in JSONObject
      * in order to send the login request to the server.

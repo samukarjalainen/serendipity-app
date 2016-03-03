@@ -54,7 +54,7 @@ public class Login extends AsyncTask<URL, Void, Void> {
         int httpResponseCode;
         String optionalErrorMessage = null;
         String authToken = null;
-        JSONObject dataToSend =authCommsEntity();;
+        JSONObject dataToSend =mDataHandler.authenticationEntity();
 
 
         URL realUrl = urls[0];
@@ -73,7 +73,7 @@ public class Login extends AsyncTask<URL, Void, Void> {
             urlConnection.setChunkedStreamingMode(0);
             OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
             byte[] data = dataToSend.toString().getBytes();
-            Log.e(TAG, data.toString());
+           Log.e(TAG, data.toString());
             //TODO use gzip if defined by BtGwService.mCompressionWithServerInUse
             out.write(data);
             out.flush();
@@ -90,21 +90,19 @@ public class Login extends AsyncTask<URL, Void, Void> {
                 JSONObject jsonObject = new JSONObject(result);
                 Log.e("tag", jsonObject.getString("token"));
                 authToken = jsonObject.getString("token");
-
-                //TODO store in database
-                // mDataHandler.storeAuthToken(jsonObject.getString("token"));
-
+                mDataHandler.storeAuthToken(authToken);
+                onPostExecute();
             } else {
                 //Login failed
                 optionalErrorMessage = urlConnection.getResponseMessage();
 
             }
         } catch (Exception e) {
-            Log.e(TAG, "HTTP traffic exception");
+            Log.e(TAG, "HTTP traffic exception   " + e.toString());
         } finally {
             urlConnection.disconnect();
         }
-        onPostExecute();
+
 
 
      //   SoundUploader serverSync = new SoundUploader(this.ctx);
@@ -119,7 +117,7 @@ public class Login extends AsyncTask<URL, Void, Void> {
         //Toast.makeText(activity, Boolean.toString(result), Toast.LENGTH_LONG).show();
 
         ctx.startActivity(new Intent(ctx, RecordScreen.class));
-ctx.finish();
+        ctx.finish();
     }
     private String convertStreamToString(InputStream isds) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(isds));

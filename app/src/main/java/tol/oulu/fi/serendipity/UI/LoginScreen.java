@@ -33,7 +33,7 @@ public class LoginScreen  extends Activity  {
         final DataHandler mDataHandler = DataHandler.getInstance(this);
         final EditText username = (EditText)findViewById(R.id.editText);
         final EditText password = (EditText)findViewById(R.id.editText2);
-
+mDataHandler.storeAuthToken("eskjbfw");
         final Button b1=(Button)findViewById(R.id.button1);
         final URL[] requestURL = {null};
         b1.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +41,7 @@ public class LoginScreen  extends Activity  {
             public void onClick(View v) {
                 pass = password.getText().toString();
                 user= username.getText().toString();
-              //  mDataHandler.updateLoginCredentials(user, pass);
+               mDataHandler.updateLoginCredentials(user, pass);
                 try {
                     requestURL[0] = new URL("http://46.101.104.38:3000/login");
                 } catch (MalformedURLException e) {
@@ -50,7 +50,6 @@ public class LoginScreen  extends Activity  {
                 Login serverSync = new Login(LoginScreen.this);
                 serverSync.execute(requestURL[0]);
 
-//change
             }
         });
 
