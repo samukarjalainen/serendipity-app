@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.R;
@@ -23,22 +25,28 @@ import tol.oulu.fi.serendipity.Server.Login;
  * Created by ashrafuzzaman on 10/02/2016.
  */
 public class LoginScreen  extends Activity  {
-
+    private static String TAG = "Serendipity-loginScreen";
     private String user= "";
     private String pass = "";
+    private DataHandler mDataHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_screen);
-        final DataHandler mDataHandler = DataHandler.getInstance(this);
+        mDataHandler = DataHandler.getInstance(this);
+        mDataHandler.insertSoundDetails();
+        syncNow();
+
         final EditText username = (EditText)findViewById(R.id.editText);
         final EditText password = (EditText)findViewById(R.id.editText2);
-mDataHandler.storeAuthToken("eskjbfw");
+        mDataHandler.storeAuthToken("eskjbfw");
         final Button b1=(Button)findViewById(R.id.button1);
         final URL[] requestURL = {null};
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mDataHandler.updateSoundDetails("password");
+                syncNow();
                 pass = password.getText().toString();
                 user= username.getText().toString();
                mDataHandler.updateLoginCredentials(user, pass);
@@ -54,7 +62,15 @@ mDataHandler.storeAuthToken("eskjbfw");
         });
 
     }
+    private void syncNow() {
+        ArrayList<HashMap<String, Object>> catcherData = mDataHandler.getSoundDetails("password");
+        String[] catcherId = new String[catcherData.size()];
+        for (int i = 0; i < catcherData.size(); i++) {
+            catcherId[i] = (String) catcherData.get(i).get("sound_id");
+            Log.e(TAG, catcherId[i]);
 
+        }
+    }
 
 
 }
