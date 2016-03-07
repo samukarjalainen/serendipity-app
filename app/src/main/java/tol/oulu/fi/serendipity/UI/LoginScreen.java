@@ -1,16 +1,11 @@
 package tol.oulu.fi.serendipity.UI;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,8 +29,6 @@ public class LoginScreen  extends Activity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_screen);
         mDataHandler = DataHandler.getInstance(this);
-        mDataHandler.insertSoundDetails();
-        syncNow();
 
         final EditText username = (EditText)findViewById(R.id.editText);
         final EditText password = (EditText)findViewById(R.id.editText2);
@@ -45,8 +38,6 @@ public class LoginScreen  extends Activity  {
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDataHandler.updateSoundDetails("password");
-                syncNow();
                 pass = password.getText().toString();
                 user= username.getText().toString();
                mDataHandler.updateLoginCredentials(user, pass);
@@ -62,15 +53,7 @@ public class LoginScreen  extends Activity  {
         });
 
     }
-    private void syncNow() {
-        ArrayList<HashMap<String, Object>> catcherData = mDataHandler.getSoundDetails("password");
-        String[] catcherId = new String[catcherData.size()];
-        for (int i = 0; i < catcherData.size(); i++) {
-            catcherId[i] = (String) catcherData.get(i).get("sound_id");
-            Log.e(TAG, catcherId[i]);
 
-        }
-    }
 
 
 }

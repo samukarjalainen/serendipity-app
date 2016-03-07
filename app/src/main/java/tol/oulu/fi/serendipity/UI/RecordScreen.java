@@ -33,6 +33,8 @@ import android.widget.ToggleButton;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.R;
@@ -40,7 +42,7 @@ import tol.oulu.fi.serendipity.SerendipityService;
 import tol.oulu.fi.serendipity.Server.SoundUploader;
 
 public class RecordScreen extends Activity {
- private static final String LOG = "AudioRecordTest";
+ private static final String TAG = "Serendipity-RS";
  private MediaPlayer mMediaPlayer;
  private MediaRecorder mRecorder = null;
  private static String mFileName = null;
@@ -54,10 +56,12 @@ public class RecordScreen extends Activity {
  private final Handler taskHandler = new Handler();
  private float x1,x2;
  static final int MIN_DISTANCE = 150;
+ private DataHandler mDataHandler;
  @Override
  protected void onCreate(Bundle savedInstanceState) {
   super.onCreate(savedInstanceState);
   setContentView(R.layout.activity_record_screen);
+  mDataHandler = DataHandler.getInstance(this);
   chronometer = (Chronometer) findViewById(R.id.chronometer);
   uploadButton = (ImageButton) findViewById(R.id.imageButton);
   seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -79,20 +83,7 @@ public class RecordScreen extends Activity {
      chronometer.setVisibility(View.GONE);
      uploadButton.setVisibility(View.VISIBLE);
      stopRecording();
-     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-     if (ActivityCompat.checkSelfPermission(RecordScreen.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(RecordScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-      // TODO: Consider calling
-      //    ActivityCompat#requestPermissions
-      // here to request the missing permissions, and then overriding
-      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-      //                                          int[] grantResults)
-      // to handle the case where the user grants the permission. See the documentation
-      // for ActivityCompat#requestPermissions for more details.
-      return;
-     }
-     Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-     //double longitude = location.getLongitude();
-     //double latitude = location.getLatitude();
+
      playToggleButton.setVisibility(View.VISIBLE);
      chronometer.stop();
     }
@@ -128,9 +119,7 @@ public class RecordScreen extends Activity {
  }
 
  private void startRecording() {
-  Intent intentForService = new Intent(RecordScreen.this, SerendipityService.class);
-  intentForService.setAction(Intent.ACTION_RUN);
-  startService(intentForService);
+
   mRecorder = new MediaRecorder();
   mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
   mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -140,7 +129,7 @@ public class RecordScreen extends Activity {
   try {
    mRecorder.prepare();
   } catch (IOException e) {
-   Log.e(LOG, "prepare() failed");
+   Log.e(TAG, "prepare() failed");
   }
 
   mRecorder.start();
@@ -149,10 +138,18 @@ public class RecordScreen extends Activity {
   mRecorder.stop();
   mRecorder.release();
   mRecorder = null;
+
+  Intent intentForService = new Intent(RecordScreen.this, SerendipityService.class);
+  intentForService.setAction(Intent.ACTION_RUN);
+  intentForService.putExtra("soundName", mFileName);
+  startService(intentForService);
+
  }
  public RecordScreen() {
   mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
   mFileName += "/audiorecordtest2.mp3";
+  mDataHandler = DataHandler.getInstance(this);
+  mDataHandler.insertSoundDetails(mFileName);
  }
  private void startPlaying() {
   setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -162,7 +159,7 @@ public class RecordScreen extends Activity {
    mMediaPlayer.prepare();
 
   } catch (IOException e) {
-   Log.e(LOG, "error");
+   Log.e(TAG, "error");
   }
   mMediaPlayer.start();
   mediaPos =mMediaPlayer.getCurrentPosition();
@@ -192,16 +189,12 @@ public class RecordScreen extends Activity {
    public void onClick(View v) {
     //timerHandler.CancelAlarm(getApplicationContext());
     synchronized (DataHandler.class) {
-     URL requestURL = null;
+
      DataHandler mDataHandler = DataHandler.getInstance(RecordScreen.this);
      String authToken = mDataHandler.getAuthToken();
-     try {
-      requestURL = new URL("http://46.101.104.38:3000/upload");
-     } catch (MalformedURLException e) {
-      Log.e(LOG,"failed");
-     }
+
      SoundUploader serverSync = new SoundUploader( RecordScreen.this);
-     serverSync.execute(authToken);
+     serverSync.execute(mFileName);
 
     }
 
@@ -273,4 +266,5 @@ public class RecordScreen extends Activity {
   return super.onTouchEvent(event);
  }
 
-}
+ }
+

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.UI.RecordScreen;
 
 /**
@@ -42,19 +44,23 @@ public class SoundUploader extends AsyncTask<String, Void, Void> {
     int maxBufferSize = 1 * 1024 * 1024;
     File sourceFile = null;
     String serverResponseMessage = null;
+    private DataHandler mDataHandler;
 Context ctx;
     public SoundUploader(RecordScreen recordScreen) {
         ctx = recordScreen.getApplicationContext();
         initFile();
+        mDataHandler = DataHandler.getInstance(recordScreen);
         sourceFile = new File(mFileName);
     }
 
     @Override
     protected Void doInBackground(String... param) {
-        JSONObject dataToSend =authCommsEntity();
+        String soundPath = param[0];
+        JSONObject dataToSend =mDataHandler.soundUploadEntity(soundPath);
 
         try {
-            String authToken = param[0];
+
+            String authToken = mDataHandler.getAuthToken();
             FileInputStream fileInputStream = new FileInputStream(sourceFile.getPath());
             URL url  = new URL("http://46.101.104.38:3000/api/sounds/upload");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -162,7 +168,6 @@ Context ctx;
             e.printStackTrace();
         }
 
-//TODO
         return authJson;
     }
 

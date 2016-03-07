@@ -17,6 +17,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import tol.oulu.fi.serendipity.Data.DataHandler;
+
 /**
  * Created by ashrafuzzaman on 07/03/2016.
  */
@@ -29,6 +34,7 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 	private LocationRequest mLocationRequest;
 
 	private boolean mRequestLocationUpdates = false;
+	private DataHandler mDataHandler;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -38,7 +44,7 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
+		mDataHandler = DataHandler.getInstance(this);
 		Log.e(TAG, "onCreate");
 		buildGoogleApiClient();
 	}
@@ -51,7 +57,8 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 		if (intent != null) {
 			String actionOfIntent = intent.getAction();
 			if (actionOfIntent != null && actionOfIntent.equals(Intent.ACTION_RUN)) {
-				displayLocation();
+				String sound = intent.getStringExtra("soundName");
+				displayLocation(sound);
 			}
 		}
 		return super.onStartCommand(intent, flags, startId);
@@ -64,14 +71,29 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 				.addApi(LocationServices.API).build();
 	}
 
-	private void displayLocation() {
+	private void displayLocation(String sound) {
 
 		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 		if(mLastLocation != null) {
 			double latitude = mLastLocation.getLatitude();
-			double longtitude = mLastLocation.getLongitude();
-			Log.e(TAG, "Latitude:" + String.valueOf(latitude) + " Longitude:" + String.valueOf(longtitude));
+			double longitude = mLastLocation.getLongitude();
+			mDataHandler.updateSoundDetails(sound, longitude, latitude,null);
+			getSoundDetails(sound);
+			Log.e(TAG, "Latitude:" + String.valueOf(latitude) + " Longitude:" + String.valueOf(longitude));
 		} else {
+		}
+	}
+	private void getSoundDetails(String sound) {
+		ArrayList<HashMap<String, Object>> soundData = mDataHandler.getSoundDetails(sound);
+		String[] soundPath= new String[soundData.size()];
+		Double[] longitude = new Double[soundData.size()];
+		Double[] latitude = new Double[soundData.size()];
+		for (int i = 0; i < soundData.size(); i++) {
+			soundPath[i] = (String) soundData.get(i).get("sound_path");
+			longitude [i] = (Double) soundData.get(i).get("longitude");
+			latitude [i] = (Double) soundData.get(i).get("latitude");
+			Log.e(TAG, soundPath[i]+"Latitude:" + String.valueOf(latitude[i]) + " Longitude:" + String.valueOf(longitude[i]));
+
 		}
 	}
 	@Override

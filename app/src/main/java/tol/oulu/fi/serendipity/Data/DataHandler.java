@@ -48,12 +48,12 @@ public class DataHandler extends SQLiteOpenHelper {
         db.execSQL(SETTINGS_INITIAL_INSERT);
         //SQL statement to create sound table
         String CREATE_SOUND_TABLE = "CREATE TABLE sound ("
-                + "sound_id int,"
+                + "sound_path varchar(10),"
                 + "record_timestamp bigint,"
                 + "sound_name String,"
                 + "sound_description text,"
-                + "longitude int,"
-                + "latitude int,"
+                + "longitude REAL,"
+                + "latitude REAL,"
                 + "user_id String)";
         db.execSQL(CREATE_SOUND_TABLE);
 
@@ -155,18 +155,23 @@ public class DataHandler extends SQLiteOpenHelper {
      *
      * @return JSONObject containing username and password.
      */
-    public JSONObject soundUploadEntity() {
-        JSONObject authJson = new JSONObject();
+    public JSONObject soundUploadEntity(String path) {
+        JSONObject soundUploadJson = new JSONObject();
         SQLiteDatabase db = getReadableDatabase();
         //TODO define json for sound upload ( need to pull the sound file from the storage and convert it to a uploadable format
         if (db != null) {
-            Cursor cursor = db.rawQuery("SELECT username, password, user_id FROM settings", null);
+            Cursor cursor = db.rawQuery("SELECT user_id, sound_path, sound_description, longitude, latitude  FROM sound WHERE sound_path ='" + path + "'", null);
+
             try {
-                if (cursor != null) {
-                    if (cursor.moveToNext() && !cursor.isNull(0) && !cursor.isNull(1)) {
-                        authJson.put("username", cursor.getString(0));
-                        authJson.put("password", cursor.getString(1));
-                    }
+                if (cursor.moveToFirst()) {
+                    do {
+                            soundUploadJson.put("title",  cursor.getString(1));
+                            soundUploadJson.put("description",cursor.getString(2));
+                            soundUploadJson.put("long", String.valueOf(cursor.getDouble(3)));
+                            soundUploadJson.put("lat", String.valueOf(cursor.getDouble(4)));
+                        Log.e(TAG, "soundUploadEntity" + path);
+
+                    } while (cursor.moveToNext());
                 }
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
@@ -174,7 +179,8 @@ public class DataHandler extends SQLiteOpenHelper {
                 cursor.close();
             }
         }
-        return authJson;
+        Log.e(TAG,"soundUploadEntity"+ path);
+        return soundUploadJson;
     }
     /**
      * This method retrieves sound_name.
@@ -187,7 +193,7 @@ public class DataHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         if (db != null) {
             Cursor cursor = db.rawQuery(
-                    "SELECT sound_name FROM sound WHERE sound_id = '" + soundId + "'", null);
+                    "SELECT sound_name FROM sound WHERE sound_path = '" + soundId + "'", null);
 
             if (cursor != null) {
                 try {
@@ -202,28 +208,31 @@ public class DataHandler extends SQLiteOpenHelper {
         return retval;
     }
 
-    public void insertSoundDetails( ){
+    public void insertSoundDetails(String soundPath){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("sound_id", 1000);
+        cv.put("sound_path", soundPath);
         cv.put("record_timestamp", System.currentTimeMillis());
-        cv.put("sound_name", "password");
+        cv.put("sound_name", "test");
         cv.put("sound_description", "sdhgsgh");
-        cv.put("longitude", 0);
-        cv.put("latitude", 0);
+        cv.put("longitude", 0.0);
+        cv.put("latitude", 0.0);
         db.insert("sound", null, cv);
     }
-    public void updateSoundDetails( String name ){
+
+    public void updateSoundDetails( String path, Double longitude, Double latitude, String newName ){
+
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("sound_id", 6262);
-        cv.put("record_timestamp", System.currentTimeMillis());
-        cv.put("sound_name", "password");
-        cv.put("sound_description", "sdhgsgh");
-        cv.put("longitude", 0);
-        cv.put("latitude", 0);
-        if (db.update("sound", cv, "sound_name = ?", new String[]{name}) != 1) {
-            Log.e(TAG, "Problem when updating catcher data to DB");
+        if(latitude != null){
+            cv.put("longitude", longitude);
+            cv.put("latitude", latitude);
+        }
+        if(newName !=null ){
+            cv.put("sound_name", newName);
+        }
+        if (db.update("sound", cv, "sound_path = ?", new String[]{path}) != 1) {
+            Log.e(TAG, "Problem when updating sound data to DB");
         }
 
     }
@@ -234,9 +243,9 @@ public class DataHandler extends SQLiteOpenHelper {
      *
      * @return ArrayList
      */
-    public ArrayList<HashMap<String, Object>> getSoundDetails(String name) {
+    public ArrayList<HashMap<String, Object>> getSoundDetails(String path) {
         ArrayList<HashMap<String, Object>> soundArrayList = new ArrayList<HashMap<String, Object>>();
-        String selectQuery = "SELECT user_id, sound_id, sound_description, longitude, latitude  FROM sound WHERE sound_name = 'password' ";
+        String selectQuery = "SELECT user_id, sound_path, sound_description, longitude, latitude  FROM sound WHERE sound_path ='" + path + "'";
         SQLiteDatabase database = getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         try {
@@ -245,7 +254,7 @@ public class DataHandler extends SQLiteOpenHelper {
                     do {
                         HashMap<String, Object> contactMap = new HashMap<String, Object>();
                         contactMap.put("user_id", cursor.getString(0));
-                        contactMap.put("sound_id", cursor.getString(1));
+                        contactMap.put("sound_path", cursor.getString(1));
                         contactMap.put("sound_description", cursor.getString(2));
                         contactMap.put("longitude", cursor.getDouble(3));
                         contactMap.put("latitude", cursor.getDouble(4));
