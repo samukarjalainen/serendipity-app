@@ -36,6 +36,7 @@ import java.net.URL;
 
 import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.R;
+import tol.oulu.fi.serendipity.SerendipityService;
 import tol.oulu.fi.serendipity.Server.SoundUploader;
 
 public class RecordScreen extends Activity {
@@ -127,6 +128,9 @@ public class RecordScreen extends Activity {
  }
 
  private void startRecording() {
+  Intent intentForService = new Intent(RecordScreen.this, SerendipityService.class);
+  intentForService.setAction(Intent.ACTION_RUN);
+  startService(intentForService);
   mRecorder = new MediaRecorder();
   mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
   mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
