@@ -1,18 +1,14 @@
 package tol.oulu.fi.serendipity;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -26,7 +22,7 @@ import tol.oulu.fi.serendipity.Data.DataHandler;
  * Created by ashrafuzzaman on 07/03/2016.
  */
 public class SerendipityService extends Service implements GoogleApiClient.ConnectionCallbacks,
-		GoogleApiClient.OnConnectionFailedListener, LocationListener {
+		GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 	private static String TAG = "Serendipity-Service";
 
 	private Location mLastLocation;
@@ -47,6 +43,14 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 		mDataHandler = DataHandler.getInstance(this);
 		Log.e(TAG, "onCreate");
 		buildGoogleApiClient();
+		createLocationRequest();
+	}
+
+	protected void createLocationRequest() {
+		mLocationRequest = new LocationRequest();
+		mLocationRequest.setInterval(60000);
+		mLocationRequest.setFastestInterval(5000);
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	}
 
 	@Override
@@ -98,6 +102,15 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 	}
 	@Override
 	public void onConnected(Bundle bundle) {
+		mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+				mGoogleApiClient);
+		if (mLastLocation != null) {
+
+			Toast.makeText(this, "Latitude:" + mLastLocation.getLatitude()+", Longitude:"+mLastLocation.getLongitude(),Toast.LENGTH_LONG).show();
+
+		}
+
+		startLocationUpdates();
 
 	}
 
@@ -108,26 +121,27 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 
 	@Override
 	public void onLocationChanged(Location location) {
+		mLastLocation = location;
+		Toast.makeText(this, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude(), Toast.LENGTH_LONG).show();
+		Log.e(TAG, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude() );
 
 	}
 
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-
-	}
 
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
 
+	}
+
+	protected void startLocationUpdates() {
+		LocationServices.FusedLocationApi.requestLocationUpdates(
+				mGoogleApiClient, mLocationRequest, this);
+	}
+
+	protected void stopLocationUpdates() {
+		if (mGoogleApiClient != null) {
+			LocationServices.FusedLocationApi.removeLocationUpdates(
+					mGoogleApiClient, this);
+		}
 	}
 }

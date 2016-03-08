@@ -214,7 +214,7 @@ public class DataHandler extends SQLiteOpenHelper {
         cv.put("sound_path", soundPath);
         cv.put("record_timestamp", System.currentTimeMillis());
         cv.put("sound_name", "test");
-        cv.put("sound_description", "sdhgsgh");
+        cv.put("sound_description", "sdh,nbnvbkhvgsgh");
         cv.put("longitude", 0.0);
         cv.put("latitude", 0.0);
         db.insert("sound", null, cv);
