@@ -139,17 +139,5 @@ public class Login extends AsyncTask<URL, Void, Void> {
         }
         return sb.toString();
     }
-    public JSONObject authCommsEntity() {
-        JSONObject authJson = new JSONObject();
 
-        try {
-            authJson.put("username", "admin");
-            authJson.put("password", "admin");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-//TODO
-        return authJson;
-    }
 }

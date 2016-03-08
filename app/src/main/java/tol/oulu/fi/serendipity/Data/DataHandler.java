@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -37,14 +38,18 @@ public class DataHandler extends SQLiteOpenHelper {
                 + "username text,"
                 + "password text,"	//username
                 + "user_id text,"	//password
-                + "auth_token text)";	//authentication token
+                + "auth_token text,"//authentication token
+                + "last_longitude REAL,"
+                + "last_latitude REAL)";
         db.execSQL(CREATE_SETTINGS_TABLE);
         String SETTINGS_INITIAL_INSERT = "insert into settings("
                 + "username,"
                 + "password,"
                 + "user_id,"
-                + "auth_token)"
-                + "values ('','','','')";
+                + "auth_token,"
+                + "last_longitude,"
+                + "last_latitude)"
+                + "values ('','','','',0,0)";
         db.execSQL(SETTINGS_INITIAL_INSERT);
         //SQL statement to create sound table
         String CREATE_SOUND_TABLE = "CREATE TABLE sound ("
@@ -131,12 +136,73 @@ public class DataHandler extends SQLiteOpenHelper {
         }
         return authJson;
     }
+    public JSONObject authCommsEntity() {
+        JSONObject authJson = new JSONObject();
+
+        try {
+            authJson.put("lat", getlastLatitude());
+            authJson.put("long", getlastLongitude());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return authJson;
+    }
 
     public String getAuthToken() {
         String retval = "";
         SQLiteDatabase db = getReadableDatabase();
         if (db != null) {
             Cursor cursor = db.rawQuery("SELECT auth_token FROM settings", null);
+            try {
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        retval = cursor.getString(0);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return retval;
+    }
+    public boolean storeLastLocation(double longitude, double latitude) {
+        boolean retval = false;
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("last_longitude", longitude);
+        cv.put("last_latitude", latitude);
+        if (db.update("settings", cv, null, null) == 1) {
+            retval = true;
+        } else {
+            Log.e(TAG, "storeLocation failed");
+        }
+        return retval;
+    }
+
+    public String getlastLongitude() {
+        String retval = "";
+        SQLiteDatabase db = getReadableDatabase();
+        if (db != null) {
+            Cursor cursor = db.rawQuery("SELECT last_longitude FROM settings", null);
+            try {
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        retval = cursor.getString(0);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return retval;
+    }
+
+    public String getlastLatitude() {
+        String retval = "";
+        SQLiteDatabase db = getReadableDatabase();
+        if (db != null) {
+            Cursor cursor = db.rawQuery("SELECT last_latitude FROM settings", null);
             try {
                 if (cursor != null) {
                     if (cursor.moveToNext()) {

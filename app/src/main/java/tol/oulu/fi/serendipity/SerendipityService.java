@@ -13,10 +13,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import tol.oulu.fi.serendipity.Data.DataHandler;
+import tol.oulu.fi.serendipity.Server.Login;
+import tol.oulu.fi.serendipity.Server.SoundDownloader;
 
 /**
  * Created by ashrafuzzaman on 07/03/2016.
@@ -123,8 +127,16 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 	public void onLocationChanged(Location location) {
 		mLastLocation = location;
 		Toast.makeText(this, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude(), Toast.LENGTH_LONG).show();
-		Log.e(TAG, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude() );
-
+		Log.e(TAG, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude());
+		mDataHandler.storeLastLocation(mLastLocation.getLongitude(),mLastLocation.getLatitude());
+		final URL[] requestURL = {null};
+		try {
+			requestURL[0] = new URL("http://46.101.104.38:3000/login");
+		} catch (MalformedURLException e) {
+			Log.e("LOG", "failed");
+		}
+		SoundDownloader serverSync = new SoundDownloader(SerendipityService.this);
+		serverSync.execute(requestURL[0]);
 	}
 
 
