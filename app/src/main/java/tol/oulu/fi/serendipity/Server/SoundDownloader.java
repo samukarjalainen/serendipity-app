@@ -1,15 +1,17 @@
 package tol.oulu.fi.serendipity.Server;
 
-import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,7 +22,6 @@ import java.net.URL;
 import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.SerendipityService;
 import tol.oulu.fi.serendipity.UI.LoginScreen;
-import tol.oulu.fi.serendipity.UI.RecordScreen;
 
 /**
  * Created by ashrafuzzaman on 08/03/2016.
@@ -68,10 +69,19 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 			Log.e(TAG, String.valueOf(httpResponseCode) );
 
 			if( httpResponseCode >= 200 && httpResponseCode < 300 ) {
+				InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+				String result =  convertStreamToString(in);
+				JSONArray jsonArray = new JSONArray(result);
+				Log.e("tag", jsonArray.toString());
+				for (int i = 0; i<jsonArray.length(); i++){
+					JSONObject jsonObject =jsonArray.getJSONObject(i);
+					String id = jsonObject.getString("id");
+					Log.e("tag", id);
+					downloadSound(i, id);
 
+				}
 
 			} else {
-				//Login failed
 				optionalErrorMessage = urlConnection.getResponseMessage();
 
 			}
@@ -83,8 +93,43 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 
 		return null;
 	}
+	public static void downloadSound(int i, String id) {
+		int count;
+		try  {
+
+			URL url = new URL("http://46.101.104.38:3000/sounds/download");
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setDoOutput(true);
+			urlConnection.setRequestProperty("soundid", id);
+			urlConnection.connect();
+
+			String PATH = Environment.getExternalStorageDirectory()
+					+ "/serendipity/download";
+			File file = new File(PATH);
+			file.mkdirs();
+
+			String fileName = "title"+ i+".mp3";
+
+			File outputFile = new File(file, fileName);
+			FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+
+			InputStream inputStream = urlConnection.getInputStream();
+
+			byte[] buffer = new byte[1024];
+			int len1 = 0;
+			while ((len1 = inputStream.read(buffer)) != -1) {
+				fileOutputStream.write(buffer, 0, len1);
+			}
+			fileOutputStream.close();
+			inputStream.close();
+
+		}catch (IOException e) {
+			Log.e(TAG, "HTTP traffic exception   " + e.toString());
+		}
 
 
+	}
 	private String convertStreamToString(InputStream isds) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(isds));
 		StringBuilder sb = new StringBuilder();

@@ -52,8 +52,8 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 
 	protected void createLocationRequest() {
 		mLocationRequest = new LocationRequest();
-		mLocationRequest.setInterval(60000);
-		mLocationRequest.setFastestInterval(5000);
+		mLocationRequest.setInterval(10*60000);
+		mLocationRequest.setFastestInterval(1*60*000);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	}
 
