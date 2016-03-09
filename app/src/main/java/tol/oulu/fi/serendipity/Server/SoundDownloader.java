@@ -1,7 +1,12 @@
 package tol.oulu.fi.serendipity.Server;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,8 +25,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import tol.oulu.fi.serendipity.Data.DataHandler;
+import tol.oulu.fi.serendipity.R;
 import tol.oulu.fi.serendipity.SerendipityService;
 import tol.oulu.fi.serendipity.UI.LoginScreen;
+import tol.oulu.fi.serendipity.UI.PlayListScreen;
 
 /**
  * Created by ashrafuzzaman on 08/03/2016.
@@ -29,15 +36,16 @@ import tol.oulu.fi.serendipity.UI.LoginScreen;
 public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 	/** used as tag for Logs */
 	private static final String TAG = "Serendipity-SD";
-	LoginScreen ctx = null;
+	SerendipityService ctx = null;
 	DataHandler mDataHandler;
 	public SoundDownloader (SerendipityService serendipityService) {
 		mDataHandler = DataHandler.getInstance(serendipityService);
-
+		ctx = serendipityService;
 	}
 
 	@Override
 	protected Void doInBackground(URL... urls) {
+
 		Log.d(TAG, "doInBackground()");
 		boolean successValue = false;
 		int httpResponseCode;
@@ -67,7 +75,7 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 			httpResponseCode = urlConnection.getResponseCode();
 
 			Log.e(TAG, String.valueOf(httpResponseCode) );
-
+			int soundCount= 0;
 			if( httpResponseCode >= 200 && httpResponseCode < 300 ) {
 				InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 				String result =  convertStreamToString(in);
@@ -77,10 +85,11 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 					JSONObject jsonObject =jsonArray.getJSONObject(i);
 					String id = jsonObject.getString("id");
 					Log.e("tag", id);
-					downloadSound(i, id);
+					soundCount = i;
+					//downloadSound(i, id);
 
 				}
-
+				notification(soundCount);
 			} else {
 				optionalErrorMessage = urlConnection.getResponseMessage();
 
@@ -129,6 +138,26 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 		}
 
 
+	}
+
+	private void notification (int soundCount){
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.ctx);
+		mBuilder.setSmallIcon(R.drawable.ic_launcher);
+		mBuilder.setContentTitle("Serendipity");
+		mBuilder.setContentText(soundCount + " sound(s) available!! click to play!!");
+		NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(ctx.NOTIFICATION_SERVICE);
+
+		Intent resultIntent = new Intent(ctx, PlayListScreen.class);
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx.getApplication());
+		stackBuilder.addParentStack(PlayListScreen.class);
+
+// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
+		int notificationID = 999999;
+// notificationID allows you to update the notification later on.
+		mNotificationManager.notify(notificationID, mBuilder.build());
 	}
 	private String convertStreamToString(InputStream isds) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(isds));

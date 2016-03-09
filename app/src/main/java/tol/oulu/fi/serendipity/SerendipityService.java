@@ -47,13 +47,13 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 		mDataHandler = DataHandler.getInstance(this);
 		Log.e(TAG, "onCreate");
 		buildGoogleApiClient();
-		createLocationRequest();
+
 	}
 
 	protected void createLocationRequest() {
 		mLocationRequest = new LocationRequest();
 		mLocationRequest.setInterval(10*60000);
-		mLocationRequest.setFastestInterval(1*60*000);
+		mLocationRequest.setFastestInterval(20*1000);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	}
 
@@ -69,7 +69,14 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 				displayLocation(sound);
 			}
 		}
-		return super.onStartCommand(intent, flags, startId);
+		if (intent != null) {
+			String actionOfIntent = intent.getAction();
+			if (actionOfIntent != null && actionOfIntent.equals(Intent.ACTION_ASSIST)) {
+				createLocationRequest();
+			}
+		}
+
+		return START_STICKY;
 	}
 
 	protected synchronized void buildGoogleApiClient() {

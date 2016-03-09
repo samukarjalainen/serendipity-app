@@ -3,6 +3,7 @@ package tol.oulu.fi.serendipity.UI;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,6 +51,7 @@ public class RecordScreen extends Activity {
  ToggleButton recordToggleButton;
  ToggleButton playToggleButton;
  ImageButton uploadButton;
+ ImageButton downloadButton;
  private Chronometer chronometer;
  private SeekBar seekBar;
  private int mediaPos;
@@ -64,6 +67,19 @@ public class RecordScreen extends Activity {
   mDataHandler = DataHandler.getInstance(this);
   chronometer = (Chronometer) findViewById(R.id.chronometer);
   uploadButton = (ImageButton) findViewById(R.id.imageButton);
+  downloadButton = (ImageButton) findViewById(R.id.imageButton2);
+  downloadButton .setOnClickListener(new ImageButton.OnClickListener() {
+
+   @Override
+   public void onClick(View v) {
+
+    Intent intentForService = new Intent(RecordScreen.this, SerendipityService.class);
+    intentForService.setAction(Intent.ACTION_ASSIST);
+    startService(intentForService);
+
+
+   }
+  });
   seekBar = (SeekBar) findViewById(R.id.seekBar);
   recordToggleButton = (ToggleButton) findViewById(R.id.toggleRecord);
   playToggleButton = (ToggleButton) findViewById(R.id.togglePlay);
@@ -100,7 +116,7 @@ public class RecordScreen extends Activity {
     }
    }
   });
-  uploadButton.setOnClickListener(new ImageButton.OnClickListener(){
+  uploadButton.setOnClickListener(new ImageButton.OnClickListener() {
 
    @Override
    public void onClick(View v) {
@@ -212,6 +228,7 @@ public class RecordScreen extends Activity {
   dialog.show();
 
  }
+
  private Runnable moveSeekBarThread = new Runnable() {
 
   public void run() {
@@ -228,7 +245,7 @@ public class RecordScreen extends Activity {
   }
  };
 
- @Override
+/* @Override
  public boolean onTouchEvent(MotionEvent event)
  {
   switch(event.getAction())
@@ -264,7 +281,7 @@ public class RecordScreen extends Activity {
     break;
   }
   return super.onTouchEvent(event);
- }
+ }*/
 
  }
 

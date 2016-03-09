@@ -72,4 +72,19 @@
             android:visibility="gone"
             />
     </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp">
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/imageButton2"
+            android:layout_gravity="center|top|right"
+            android:background="@drawable/download"
+            />
+    </FrameLayout>
 </RelativeLayout>
