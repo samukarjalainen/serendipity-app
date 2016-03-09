@@ -86,7 +86,7 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 					String id = jsonObject.getString("id");
 					Log.e("tag", id);
 					soundCount = i;
-					//downloadSound(i, id);
+					downloadSound(i, id);
 
 				}
 				notification(soundCount);

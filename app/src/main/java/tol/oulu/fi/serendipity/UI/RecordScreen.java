@@ -68,18 +68,6 @@ public class RecordScreen extends Activity {
   chronometer = (Chronometer) findViewById(R.id.chronometer);
   uploadButton = (ImageButton) findViewById(R.id.imageButton);
   downloadButton = (ImageButton) findViewById(R.id.imageButton2);
-  downloadButton .setOnClickListener(new ImageButton.OnClickListener() {
-
-   @Override
-   public void onClick(View v) {
-
-    Intent intentForService = new Intent(RecordScreen.this, SerendipityService.class);
-    intentForService.setAction(Intent.ACTION_ASSIST);
-    startService(intentForService);
-
-
-   }
-  });
   seekBar = (SeekBar) findViewById(R.id.seekBar);
   recordToggleButton = (ToggleButton) findViewById(R.id.toggleRecord);
   playToggleButton = (ToggleButton) findViewById(R.id.togglePlay);

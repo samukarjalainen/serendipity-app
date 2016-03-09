@@ -47,6 +47,7 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 		mDataHandler = DataHandler.getInstance(this);
 		Log.e(TAG, "onCreate");
 		buildGoogleApiClient();
+		createLocationRequest();
 
 	}
 
@@ -72,7 +73,7 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 		if (intent != null) {
 			String actionOfIntent = intent.getAction();
 			if (actionOfIntent != null && actionOfIntent.equals(Intent.ACTION_ASSIST)) {
-				createLocationRequest();
+
 			}
 		}
 
