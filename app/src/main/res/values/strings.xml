@@ -10,4 +10,8 @@
     <string name="Login">Login</string>
     <string name="upload_text">Upload</string>
     <string name="upload_cancel">Cancel</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve">AIzaSyB6hnwhxPeT1QTOSGLPduRKoSQx6efACvg</string>
+    <string name="google_app_id">771883370162</string>
+
 </resources>
