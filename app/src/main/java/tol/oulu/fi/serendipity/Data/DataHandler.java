@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +41,8 @@ public class DataHandler extends SQLiteOpenHelper {
                 + "user_id text,"	//password
                 + "auth_token text,"//authentication token
                 + "last_longitude REAL,"
-                + "last_latitude REAL)";
+                + "last_latitude REAL,"
+                + "selected_row int)";
         db.execSQL(CREATE_SETTINGS_TABLE);
         String SETTINGS_INITIAL_INSERT = "insert into settings("
                 + "username,"
@@ -48,8 +50,9 @@ public class DataHandler extends SQLiteOpenHelper {
                 + "user_id,"
                 + "auth_token,"
                 + "last_longitude,"
-                + "last_latitude)"
-                + "values ('','','','',0,0)";
+                + "last_latitude,"
+                + "selected_row)"
+                + "values ('','','','',0,0,0)";
         db.execSQL(SETTINGS_INITIAL_INSERT);
         //SQL statement to create sound table
         String CREATE_SOUND_TABLE = "CREATE TABLE sound ("
@@ -109,7 +112,42 @@ public class DataHandler extends SQLiteOpenHelper {
         }
         return retval;
     }
+    /**
+     * This method saves auth_token to the settings table.
+     *
+     * @param position authentication token in string format.
+     * @return True if the query is successful.
+     */
+    public boolean storeSelectedItem(int position) {
+        boolean retval = false;
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("selected_row", position);
+        if (db.update("settings", cv, null, null) == 1) {
+            retval = true;
+        } else {
+            Log.e(TAG, "storeSelectedItem failed");
+        }
+        return retval;
+    }
 
+    public int getSelectedItem() {
+        int retval = 0;
+        SQLiteDatabase db = getReadableDatabase();
+        if (db != null) {
+            Cursor cursor = db.rawQuery("SELECT selected_row FROM settings", null);
+            try {
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        retval = cursor.getInt(0);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return retval;
+    }
     /**
      * This method retrieves username, password and user_id from settings and puts them in JSONObject
      * in order to send the login request to the server.
@@ -275,6 +313,7 @@ public class DataHandler extends SQLiteOpenHelper {
     }
 
     public void insertSoundDetails(String soundPath){
+
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("sound_path", soundPath);
@@ -285,6 +324,65 @@ public class DataHandler extends SQLiteOpenHelper {
         cv.put("latitude", 0.0);
         db.insert("sound", null, cv);
     }
+
+    public void insertDownloadedSoundDetails(JSONArray jsonArray){
+        String soundPath = "";
+        String title = "";
+        String description = "";
+        double longitude = 0.0;
+        double latitude =0.0;
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        for (int i = 0; i<jsonArray.length(); i++){
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = jsonArray.getJSONObject(i);
+                String id = jsonObject.getString("id");
+                Log.e("tag", id);
+                title = jsonObject.getString("title");
+                description = jsonObject.getString("description");
+                latitude = jsonObject.getDouble("lat");
+                longitude = jsonObject.getDouble("long");
+                cv.put("sound_path", soundPath);
+                cv.put("record_timestamp", System.currentTimeMillis());
+                cv.put("sound_name", title);
+                cv.put("sound_description", description);
+                cv.put("longitude", longitude);
+                cv.put("latitude", latitude);
+                db.insert("sound", null, cv);
+                Log.e("tag","success");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+    }
+    public ArrayList<HashMap<String, Object>> getAllSoundData() {
+        ArrayList<HashMap<String, Object>> catcherArrayList = new ArrayList<HashMap<String, Object>>();
+        String selectQuery = "SELECT sound_name, longitude, latitude FROM sound";
+        SQLiteDatabase database = getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        try {
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        HashMap<String, Object> contactMap = new HashMap<String, Object>();
+                        contactMap.put("sound_name", cursor.getString(0));
+                        contactMap.put("longitude", cursor.getInt(1));
+                        contactMap.put("latitude", cursor.getString(2));
+                        catcherArrayList.add(contactMap);
+                    } while (cursor.moveToNext());
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+        return catcherArrayList;
+    }
+
 
     public void updateSoundDetails( String path, Double longitude, Double latitude, String newName ){
 

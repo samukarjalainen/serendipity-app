@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="tol.oulu.fi.serendipity"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -16,7 +16,7 @@
         <service android:name=".SerendipityService"/>
 
         <activity
-            android:name=".UI.MapScreen"
+            android:name=".UI.LoginScreen"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -26,13 +26,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".UI.SelectionScreen"
+            android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".UI.RecordScreen"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".UI.LoginScreen"
+            android:name=".UI.LocateScreen"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"/>
@@ -43,11 +49,11 @@
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB6hnwhxPeT1QTOSGLPduRKoSQx6efACvg"/>
+            android:value="AIzaSyCPXX7RSfpZRyOT8vD8Cc2VQvSWL25kl0Y"/>
 
     </application>
 

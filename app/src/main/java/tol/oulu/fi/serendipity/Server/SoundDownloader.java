@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -27,8 +28,9 @@ import java.net.URL;
 import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.R;
 import tol.oulu.fi.serendipity.SerendipityService;
+import tol.oulu.fi.serendipity.UI.LocateScreen;
 import tol.oulu.fi.serendipity.UI.LoginScreen;
-import tol.oulu.fi.serendipity.UI.PlayListScreen;
+import tol.oulu.fi.serendipity.UI.SelectionScreen;
 
 /**
  * Created by ashrafuzzaman on 08/03/2016.
@@ -81,6 +83,8 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 				String result =  convertStreamToString(in);
 				JSONArray jsonArray = new JSONArray(result);
 				Log.e("tag", jsonArray.toString());
+
+				mDataHandler.insertDownloadedSoundDetails(jsonArray);
 				for (int i = 0; i<jsonArray.length(); i++){
 					JSONObject jsonObject =jsonArray.getJSONObject(i);
 					String id = jsonObject.getString("id");
@@ -90,6 +94,8 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 
 				}
 				notification(soundCount);
+
+				onPostExecute()	;
 			} else {
 				optionalErrorMessage = urlConnection.getResponseMessage();
 
@@ -135,11 +141,17 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 
 		}catch (IOException e) {
 			Log.e(TAG, "HTTP traffic exception   " + e.toString());
+
 		}
-
-
 	}
 
+	protected void onPostExecute() {
+		//Toast.makeText(activity, Boolean.toString(result), Toast.LENGTH_LONG).show();
+		Intent dialogIntent = new Intent(ctx, LocateScreen.class);
+		dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		ctx.startActivity(dialogIntent);
+
+	}
 	private void notification (int soundCount){
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.ctx);
 		mBuilder.setSmallIcon(R.drawable.ic_launcher);
@@ -147,7 +159,7 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 		mBuilder.setContentText(soundCount + " sound(s) available!! click to play!!");
 		NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(ctx.NOTIFICATION_SERVICE);
 
-		Intent resultIntent = new Intent(ctx, PlayListScreen.class);
+		/*Intent resultIntent = new Intent(ctx, PlayListScreen.class);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx.getApplication());
 		stackBuilder.addParentStack(PlayListScreen.class);
 
@@ -157,7 +169,7 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 		mBuilder.setContentIntent(resultPendingIntent);
 		int notificationID = 999999;
 // notificationID allows you to update the notification later on.
-		mNotificationManager.notify(notificationID, mBuilder.build());
+		mNotificationManager.notify(notificationID, mBuilder.build());*/
 	}
 	private String convertStreamToString(InputStream isds) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(isds));

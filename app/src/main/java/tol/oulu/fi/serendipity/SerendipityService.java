@@ -76,6 +76,20 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 
 			}
 		}
+		if (intent != null) {
+			String actionOfIntent = intent.getAction();
+			if (actionOfIntent != null && actionOfIntent.equals(Intent.ACTION_ANSWER)) {
+				Log.e("LOG", "ACTION_ANSWER");
+				final URL[] requestURL = {null};
+				try {
+					requestURL[0] = new URL("");
+				} catch (MalformedURLException e) {
+					Log.e("LOG", "failed");
+				}
+				SoundDownloader serverSync = new SoundDownloader(SerendipityService.this);
+				serverSync.execute(requestURL[0]);
+			}
+		}
 
 		return START_STICKY;
 	}

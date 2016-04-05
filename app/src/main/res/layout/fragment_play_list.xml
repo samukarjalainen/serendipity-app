@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/bg">
+
+    <TextView
+
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/title_tv"
+        android:textColor="#FFFFFF"
+
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Serendipity"
+        android:id="@+id/app_tv"
+        android:textColor="#FFFFFF"
+
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="00:00"
+        android:id="@+id/timer"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="center_horizontal"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/custom_progressbar"
+        android:layout_width="260dp"
+        android:layout_marginTop="20dp"
+        android:layout_height="18dp"
+        android:id="@+id/progressBar"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/pgb"/>
+    <ToggleButton
+
+        android:layout_marginTop="10dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:id="@+id/play_list_toggle"
+        android:textOff=""
+        android:textOn=""
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/play_toggle"/>
+    <View
+        android:background="#FFFFFF"
+        android:layout_marginTop="40dp"
+        android:layout_width="fill_parent"
+        android:layout_height=".5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/listView" />
+
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#FFFFFF"
+        android:choiceMode="singleChoice"
+        android:listSelector="@android:color/darker_gray"
+        android:dividerHeight=".5px"
+        android:id="@+id/listView"/>
+</LinearLayout>

@@ -33,6 +33,7 @@ import javax.net.ssl.HttpsURLConnection;
 import tol.oulu.fi.serendipity.Data.DataHandler;
 import tol.oulu.fi.serendipity.UI.LoginScreen;
 import tol.oulu.fi.serendipity.UI.RecordScreen;
+import tol.oulu.fi.serendipity.UI.SelectionScreen;
 
 /**
  * Created by ashrafuzzaman on 22/02/2016.
@@ -116,7 +117,7 @@ public class Login extends AsyncTask<URL, Void, Void> {
     protected void onPostExecute() {
         //Toast.makeText(activity, Boolean.toString(result), Toast.LENGTH_LONG).show();
 
-        ctx.startActivity(new Intent(ctx, RecordScreen.class));
+        ctx.startActivity(new Intent(ctx, SelectionScreen.class));
         ctx.finish();
     }
     private String convertStreamToString(InputStream isds) {
