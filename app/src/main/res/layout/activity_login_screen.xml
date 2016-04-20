@@ -4,19 +4,14 @@
     style="@style/BasicViewStyle"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/app_name"
-        android:textAllCaps="true"
-        android:textSize="44sp"
-        android:gravity="center_horizontal"
-        android:id="@+id/loginHeadingTextView"
-        android:layout_marginTop="48dp"
-        android:textColor="@color/mainTextColor"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/titlepicture"
+    android:src="@drawable/title_serendipity"
+    android:layout_marginTop="50dp"
+    />
+
 
     <EditText
         android:theme="@style/EditTextCustom"
@@ -28,12 +23,12 @@
         android:hint="@string/username"
         android:focusable="true"
         android:paddingBottom="16dp"
-        android:layout_below="@+id/loginHeadingTextView"
+        android:layout_below="@+id/titlepicture"
         android:layout_marginTop="72dp"
-        android:layout_alignLeft="@+id/loginHeadingTextView"
-        android:layout_alignStart="@+id/loginHeadingTextView"
-        android:layout_alignRight="@+id/loginHeadingTextView"
-        android:layout_alignEnd="@+id/loginHeadingTextView"
+        android:layout_alignLeft="@+id/titlepicture"
+        android:layout_alignStart="@+id/titlepicture"
+        android:layout_alignRight="@+id/titlepicture"
+        android:layout_alignEnd="@+id/titlepicture"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"/>

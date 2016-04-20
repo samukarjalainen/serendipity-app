@@ -24,14 +24,17 @@
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/upload_cancel"/>
+            android:text="@string/upload_cancel"
+            android:background="@drawable/upload_dialog_button"
+            />
 
         <Button
             android:id="@+id/dialogButtonLogout"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/upload_text" />
+            android:text="@string/upload_text"
+            android:background="@drawable/upload_dialog_button"/>
     </LinearLayout>
 
 </LinearLayout>
