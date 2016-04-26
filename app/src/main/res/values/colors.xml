@@ -8,5 +8,4 @@
     <color name="mainTextColor">#FFFFFF</color>
     <color name="secondaryTextColor">#BFBFBF</color>
     <color name="hintTextColor">#bfbfbf</color>
-    <color name="pressedColor">#937878</color>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,6 +14,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -147,6 +150,19 @@ public class SerendipityService extends Service implements GoogleApiClient.Conne
 
 	@Override
 	public void onLocationChanged(Location location) {
+		/*String path = Environment.getExternalStorageDirectory().toString()+"/serendipity/download";
+		Log.d("Files", "Path: " + path);
+		File f = new File(path);
+		File file[] = f.listFiles();
+		Log.d("Files", "Size: "+ file.length);
+		for (int i=0; i < file.length; i++)
+		{
+			try {
+				file[i].getCanonicalFile().delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}*/
 		mLastLocation = location;
 		Toast.makeText(this, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude(), Toast.LENGTH_LONG).show();
 		Log.e(TAG, "Latitude:" + mLastLocation.getLatitude() + ", Longitude:" + mLastLocation.getLongitude());

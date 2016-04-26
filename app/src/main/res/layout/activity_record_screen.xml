@@ -68,7 +68,7 @@
             android:layout_height="50dp"
             android:id="@+id/imageButton"
             android:layout_gravity="center|bottom|right"
-            android:background="@drawable/record_upload_image_button"
+            android:background="@drawable/upload"
             android:visibility="gone"
             />
     </FrameLayout>

@@ -88,9 +88,10 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 				for (int i = 0; i<jsonArray.length(); i++){
 					JSONObject jsonObject =jsonArray.getJSONObject(i);
 					String id = jsonObject.getString("id");
+					String title = jsonObject.getString("title");
 					Log.e("tag", id);
-					soundCount = i;
-					downloadSound(i, id);
+					soundCount = i+1;
+					downloadSound(i, id,title);
 
 				}
 				notification(soundCount);
@@ -108,7 +109,7 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 
 		return null;
 	}
-	public static void downloadSound(int i, String id) {
+	public static void downloadSound(int i, String id, String title) {
 		int count;
 		try  {
 
@@ -159,9 +160,9 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 		mBuilder.setContentText(soundCount + " sound(s) available!! click to play!!");
 		NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(ctx.NOTIFICATION_SERVICE);
 
-		/*Intent resultIntent = new Intent(ctx, PlayListScreen.class);
+		Intent resultIntent = new Intent(ctx, LocateScreen.class);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx.getApplication());
-		stackBuilder.addParentStack(PlayListScreen.class);
+		stackBuilder.addParentStack(LocateScreen.class);
 
 // Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
@@ -169,7 +170,7 @@ public class SoundDownloader extends AsyncTask<URL, Void, Void> {
 		mBuilder.setContentIntent(resultPendingIntent);
 		int notificationID = 999999;
 // notificationID allows you to update the notification later on.
-		mNotificationManager.notify(notificationID, mBuilder.build());*/
+		mNotificationManager.notify(notificationID, mBuilder.build());
 	}
 	private String convertStreamToString(InputStream isds) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(isds));

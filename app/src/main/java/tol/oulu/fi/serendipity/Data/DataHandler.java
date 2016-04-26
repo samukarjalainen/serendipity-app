@@ -52,7 +52,7 @@ public class DataHandler extends SQLiteOpenHelper {
                 + "last_longitude,"
                 + "last_latitude,"
                 + "selected_row)"
-                + "values ('','','','',0,0,0)";
+                + "values ('','','',null,0,0,0)";
         db.execSQL(SETTINGS_INITIAL_INSERT);
         //SQL statement to create sound table
         String CREATE_SOUND_TABLE = "CREATE TABLE sound ("
@@ -371,8 +371,8 @@ public class DataHandler extends SQLiteOpenHelper {
                     do {
                         HashMap<String, Object> contactMap = new HashMap<String, Object>();
                         contactMap.put("sound_name", cursor.getString(0));
-                        contactMap.put("longitude", cursor.getInt(1));
-                        contactMap.put("latitude", cursor.getString(2));
+                        contactMap.put("longitude", cursor.getDouble(1));
+                        contactMap.put("latitude", cursor.getDouble(2));
                         catcherArrayList.add(contactMap);
                     } while (cursor.moveToNext());
                 }

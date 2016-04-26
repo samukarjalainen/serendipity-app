@@ -54,6 +54,9 @@ public class SelectionScreen extends Activity {
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+       this.finish();
+    }
 
 }

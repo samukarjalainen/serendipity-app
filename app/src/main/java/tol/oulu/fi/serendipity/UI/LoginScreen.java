@@ -1,6 +1,7 @@
 package tol.oulu.fi.serendipity.UI;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +33,6 @@ public class LoginScreen  extends Activity  {
 
         final EditText username = (EditText)findViewById(R.id.editText);
         final EditText password = (EditText)findViewById(R.id.editText2);
-        mDataHandler.storeAuthToken("eskjbfw");
         final Button b1=(Button)findViewById(R.id.button1);
         final URL[] requestURL = {null};
         b1.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +54,23 @@ public class LoginScreen  extends Activity  {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if( mDataHandler.getAuthToken() != null){
+            Intent recordIntent = new Intent(LoginScreen.this,SelectionScreen.class);
+            LoginScreen.this.startActivity(recordIntent);
+        }
 
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if( mDataHandler.getAuthToken() != null){
+
+            Intent recordIntent = new Intent(LoginScreen.this,SelectionScreen.class);
+            LoginScreen.this.startActivity(recordIntent);
+        }
+    }
 }

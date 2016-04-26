@@ -57,13 +57,18 @@ DataHandler mDataHandler;
 		mMap = googleMap;
 		ArrayList<HashMap<String, Object>> soundData =mDataHandler. getAllSoundData();
 		String[] title = new String[soundData.size()];
+		Double[] longitude = new Double[soundData.size()];
+		Double[] latitude = new Double[soundData.size()];
 
 		for (int i = 0; i < soundData.size(); i++) {
 
 			title[i] = (String) soundData.get(i).get("sound_name");
+			latitude[i] = (Double) soundData.get(i).get("latitude");
+			longitude[i] = (Double) soundData.get(i).get("longitude");
+
 			Log.e(title[i] ,title[i] );
 			// Add a marker in Sydney and move the camera
-			LatLng sydney = new LatLng(65.175957, 25.3844506);
+			LatLng sydney = new LatLng(latitude[i], longitude[i]);
 			mMap.addMarker(new MarkerOptions().position(sydney).title(title[i])).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location2));
 			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12.0f));
 		}
